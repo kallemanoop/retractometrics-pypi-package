@@ -5,11 +5,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="retractometrics",
-    version="0.0.4",
+    version="0.0.5",
     packages=find_packages(),
     install_requires=[
         "pandas",
-        "numpy"
+        "numpy","seaborn"
     ],
     entry_points={
         "console_scripts": [

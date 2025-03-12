@@ -9,7 +9,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "pandas",
-        "numpy","bump2version"
+        "numpy","bump2version","chardet"
     ],
     entry_points={
         "console_scripts": [

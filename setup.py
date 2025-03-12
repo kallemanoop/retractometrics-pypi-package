@@ -9,7 +9,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "pandas",
-        "numpy"
+        "numpy","bump2version"
     ],
     entry_points={
         "console_scripts": [

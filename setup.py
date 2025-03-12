@@ -9,7 +9,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "pandas",
-        "numpy","seaborn"
+        "numpy"
     ],
     entry_points={
         "console_scripts": [

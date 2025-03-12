@@ -10,3 +10,4 @@ retractometrics.egg-info/
 # Ignore virtual environments
 venv/
 test_env/
+requirements.txt

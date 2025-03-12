@@ -2,8 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import math
-import chardet
-
+import seaborn as sns
 
 def i10_index(citationSeries):
     """Calculate i10 index."""
@@ -61,47 +60,21 @@ def calculate_t_index(citations, h_indices):
     consistency_u = np.exp(entropy_T / normalization_factor)
     return 4 * average_h_index * consistency_u
 
-
-def detect_encoding(file_path):
-    """Detect file encoding before reading."""
-    with open(file_path, "rb") as f:
-        result = chardet.detect(f.read(100000))  # Analyze first 100,000 bytes
-    return result["encoding"]
-
 def process_csv_files(directory):
     """Process all CSV files in a given directory."""
     csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
-
+    
     if not csv_files:
         print("No CSV files found in the directory.")
         return
-
+    
     records = {}
 
     for file in csv_files:
         file_path = os.path.join(directory, file)
         print(f"Processing: {file_path}")
-
-        # Detect encoding
-        encoding = detect_encoding(file_path)
-        print(f"Detected encoding for {file}: {encoding}")
-
-        try:
-            df = pd.read_csv(
-                file_path,
-                usecols=['EID', 'Year', 'Cited by', 'Document Type', 'Funding Details'],
-                encoding=encoding,  # Use detected encoding
-                errors="replace"  # Replace bad characters
-            )
-        except UnicodeDecodeError:
-            print(f"⚠️ Encoding error in {file}, retrying with ISO-8859-1")
-            df = pd.read_csv(
-                file_path,
-                usecols=['EID', 'Year', 'Cited by', 'Document Type', 'Funding Details'],
-                encoding="ISO-8859-1",
-                errors="replace"
-            )
-
+        
+        df = pd.read_csv(file_path, usecols=['EID', 'Year', 'Cited by', 'Document Type', 'Funding Details'])
         df.set_index('EID', drop=False, inplace=True, verify_integrity=True)
 
         total_citations = df['Cited by'].sum()
@@ -114,10 +87,10 @@ def process_csv_files(directory):
             'i10 Index': i10_index(df['Cited by']),
             'h index': h_index(df['Cited by']),
             'Mock_h index': ((total_citations ** 2) / total_papers) ** (1 / 3) if total_papers else 0,
-            'e index': e_index(df['Cited by'], h_index(df['Cited by'])) if total_papers else 0,
+            'e index': e_index(df['Cited by'], h_index(df['Cited by'])),
             'm index': h_index(df['Cited by']) / (2024 - df['Year'].min()) if not df['Year'].isna().all() else 0,
             'g index': g_index(df['Cited by']),
-            's index': s_index(df['Cited by'], total_citations, total_papers) if total_papers else 0,
+            's index': s_index(df['Cited by'], total_citations, total_papers),
             'Funding Details': df['Funding Details'].notna().sum()
         }
 
@@ -131,8 +104,6 @@ def process_csv_files(directory):
         records[file.replace('.csv', '')] = data
 
     save_results(directory, records)
-
-
 
 def save_results(directory, records):
     """Save the processed records into CSV files."""

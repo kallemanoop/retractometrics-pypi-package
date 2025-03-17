@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="retractometrics",
-    version="0.0.13",
+    version="0.0.14",
     packages=find_packages(),
     install_requires=[
         "pandas",
